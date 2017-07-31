@@ -49,3 +49,15 @@ variable master_ebs_optimized {
 variable key_name {
   default = "agoncharov"
 }
+
+variable worker_count {
+  default = 3
+}
+
+variable worker_instance_type {
+  default = "t2.medium"
+}
+
+variable worker_ebs_optimized {
+  default = false
+}

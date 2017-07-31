@@ -1,0 +1,42 @@
+---
+
+- name: add docker deb repo gpg key
+  apt_key:
+    state: present
+    url: https://download.docker.com/linux/ubuntu/gpg
+
+- name: add docker repo
+  apt_repository:
+    state: present
+    update_cache: yes
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ansible_distribution_release}} stable
+
+- name: make sure there is no distro docker
+  apt:
+    name: "{{item}}"
+    state: absent
+  with_items:
+    - docker
+    - docker-engine
+    - docker.io
+
+- name: install docker packages
+  apt:
+    name: "docker-ce={{docker_release}}"
+    state: present
+
+- name: get down!
+  shell: "{{item}}"
+  with_items:
+    - systemctl stop docker
+    - rm -rf /var/lib/docker/network/files/local-kv.db
+
+- name: basic docker config
+  copy:
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
+

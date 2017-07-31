@@ -1,0 +1,15 @@
+---
+
+- name: install bridge utils
+  apt:
+    name: bridge-utils
+    state: present
+
+- name: configure cbr0 bridte for k8
+  copy:
+    src: 99-cbr0.cfg
+    dest: /etc/network/interfaces.d/99-cbr0.cfg
+    owner: root
+    group: root
+    mode: 0644
+

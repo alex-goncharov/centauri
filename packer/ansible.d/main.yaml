@@ -1,0 +1,28 @@
+---
+
+- hosts: localhost
+  connection: local
+  become: yes
+  become_user: root
+  become_method: sudo
+  vars:
+    docker_release: not_set
+    k8_release: not_set
+    libreswan_release: not_set
+    platform_repo: not_set
+  roles:
+    - apt
+    - network
+    - docker
+    - k8
+    - ipsec
+
+
+
+
+
+
+
+
+
+

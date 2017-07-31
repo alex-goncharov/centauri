@@ -1,0 +1,6 @@
+[all]
+pig ansible_host=54.154.81.115
+
+[all:vars]
+ansible_connection=ssh
+ansible_ssh_user=ubuntu

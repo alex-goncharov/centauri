@@ -1,0 +1,15 @@
+---
+
+- name: add libreswan repository
+  apt_repository:
+    repo: "{{platform_repo}}"
+    state: present
+    update_cache: yes
+
+- name: install libreswan
+  apt:
+    name: "libreswan={{libreswan_release}}"
+    state: present
+    allow_unauthenticated: yes
+
+

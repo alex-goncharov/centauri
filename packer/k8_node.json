@@ -1,0 +1,57 @@
+{
+    "variables": {
+        "image_name": "k8node",
+        "desc": "Ubuntu 16.04 LTS prebaked for use in k8 cluster",
+        "docker_release": "17.06.0~ce-0~ubuntu",
+        "k8_release": "v1.7.2",
+        "libreswan_release": "3.20-1",
+        "platform_repo": "deb http://repo.tnt-digital.io.s3-website-eu-west-1.amazonaws.com/ xenial main",
+        "aws_region": "eu-west-1",
+        "aws_ssh_username": "ubuntu"
+    },
+    "builders": [{
+        "type": "amazon-ebs",
+        "ami_name": "{{user `image_name`}}",
+        "ami_description": "{{user `desc`}}",
+        "instance_type": "t2.micro",
+        "region": "{{user `aws_region`}}",
+        "ssh_username": "{{user `aws_ssh_username`}}",
+        "force_deregister": true,
+        "force_delete_snapshot": true,
+        "source_ami_filter": {
+            "filters" : {
+                "virtualization-type": "hvm",
+                "name": "*ubuntu-xenial-16.04-amd64-server-*",
+                "root-device-type": "ebs"
+            },
+            "owners": ["099720109477"],
+            "most_recent": true
+        },
+        "tags": {
+            "source_ami": "{{.SourceAMI}}",
+            "build": "{{timestamp}}",
+            "docker": "{{user `docker_release`}}",
+            "k8": "{{user `k8_release`}}",
+            "libreswan": "{{user `libreswan_release`}}"
+        }
+    }],
+    "provisioners": [
+        {
+            "type": "shell",
+            "script": "scripts.d/ansible.sh",
+            "skip_clean": true
+        },
+        {
+            "type": "ansible-local",
+            "playbook_file": "ansible.d/main.yaml",
+            "playbook_dir": "ansible.d",
+            "extra_arguments": [
+                "-vv",
+                "--extra-vars", "k8_release={{user `k8_release`}}",
+                "--extra-vars", "docker_release={{user `docker_release`}}",
+                "--extra-vars", "libreswan_release={{user `libreswan_release`}}",
+                "--extra-vars", "'platform_repo=\"{{user `platform_repo`}}\"'"
+            ]
+        }
+    ]
+}

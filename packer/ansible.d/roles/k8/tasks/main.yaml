@@ -1,0 +1,54 @@
+---
+
+- name: k8 group
+  group:
+    name: k8
+    state: present
+    system: yes
+
+- name: Download kubernetes {{k8_release}} release
+  get_url:
+    force: yes
+    url: https://github.com/kubernetes/kubernetes/releases/download/{{k8_release}}/kubernetes.tar.gz
+    dest: /tmp/kubernetes.tar.gz
+
+- name: Unpack the thing
+  command: tar -C /tmp -zxf /tmp/kubernetes.tar.gz
+  args:
+    warn: no
+
+- name: Download some more kube (actual binaries)
+  shell: /tmp/kubernetes/cluster/get-kube-binaries.sh
+  args:
+    chdir: /tmp
+  environment:
+    KUBERNETES_SKIP_CONFIRM: y
+
+- name: Upack binaries
+  command: tar -C /tmp -zxf /tmp/kubernetes/server/kubernetes-server-linux-amd64.tar.gz
+  args:
+    warn: no
+
+- name: We need kubelet and kube-proxy in /sbin
+  shell: cp /tmp/kubernetes/server/bin/kubelet /tmp/kubernetes/server/bin/kube-proxy /sbin
+
+- name: And we want kubectl in /usr/sbin
+  shell: cp /tmp/kubernetes/server/bin/kubectl /usr/sbin
+
+- name: some permissions too
+  file:
+    name: "{{item}}"
+    owner: root
+    group: k8
+    mode: 0750
+  with_items:
+    - /sbin/kubelet
+    - /sbin/kube-proxy
+    - /usr/sbin/kubectl
+
+- name: cleanup
+  shell: rm -rf /tmp/kube*
+  args:
+    warn: no
+
+

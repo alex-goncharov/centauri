@@ -9,4 +9,7 @@
     - ca-certificates
     - curl
     - software-properties-common
+    - python-boto
+    - python-boto3
+    - awscli
 

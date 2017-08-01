@@ -1,0 +1,15 @@
+---
+
+ipsec_config_file: /etc/ipsec.conf
+ipsec_conf_d: /etc/ipsec.d
+ipsec_secrets_file: /etc/ipsec.secrets
+
+ipsec_policy_d: "{{ipsec_conf_d}}/policies"
+
+ipsec_oppo_keys:
+  - private
+  - private-or-clear
+  - clear-or-private
+  - clear
+  - block
+

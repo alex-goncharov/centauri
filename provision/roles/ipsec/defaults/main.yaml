@@ -1,0 +1,46 @@
+---
+ipsec_fqdn: "{{ ansible_fqdn }}"
+
+ipsec_conf_setup:
+  protostack: netkey
+  plutodebug: none
+  shuntlifetime: 1m
+  xfrmlifetime: 30
+  secretsfile: "{{ipsec_secrets_file}}"
+  ipsecdir: "{{ipsec_conf_d}}"
+
+ipsec_private: {}
+ipsec_private_or_clear: {}
+ipsec_clear_or_private: {}
+ipsec_clear:
+  type: "passthrough"
+  left: "%defaultroute"
+  right: "%group"
+  auto: "ondemand"
+ipsec_block:
+  type: "reject"
+  left: "%defaultroute"
+  right: "%group"
+  auto: "ondemand"
+
+ipsec_private_policy: {}
+ipsec_private_or_clear_policy: {}
+ipsec_clear_or_private_policy: {}
+ipsec_clear_policy: {}
+ipsec_block_policy: {}
+
+# cant touch this
+
+ipsec_oppo_conf:
+  private: "{{ipsec_private}}"
+  private-or-clear: "{{ipsec_private_or_clear}}"
+  clear-or-private: "{{ipsec_clear_or_private}}"
+  clear: "{{ipsec_clear}}"
+  block: "{{ipsec_block}}"
+
+ipsec_group_policies:
+  private: "{{ipsec_private_policy}}"
+  private-or-clear: "{{ipsec_private_or_clear_policy}}"
+  clear-or-private: "{{ipsec_clear_or_private_policy}}"
+  clear: "{{ipsec_clear_policy}}"
+  block: "{{ipsec_block_policy}}"

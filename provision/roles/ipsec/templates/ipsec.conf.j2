@@ -1,0 +1,17 @@
+config setup
+{% for k in ipsec_conf_setup.keys()|sort %}
+  {{ k }}={{ ipsec_conf_setup[k] }}
+{% endfor %}
+
+{% for oppo in ipsec_oppo_keys %}
+{% if ipsec_oppo_conf[oppo] | length > 0 %}
+conn {{ oppo }}
+{% for k in ipsec_oppo_conf[oppo].keys() | sort %}
+  {{ k }}={{ ipsec_oppo_conf[oppo][k] }}
+{% endfor %}
+
+{% endif %}
+{% endfor %}
+
+#include {{ipsec_conf_d}}/*.conf
+

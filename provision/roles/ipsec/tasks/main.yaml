@@ -1,0 +1,52 @@
+---
+
+- name: create some dirs
+  file:
+    name: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - "{{ ipsec_conf_d }}"
+    - "{{ ipsec_policy_d }}"
+
+- name: init nss db
+  shell: "ipsec initnss"
+  changed_when: false
+  failed_when: false
+
+- name: check certificates
+  command: "certutil -L -d sql:{{ ipsec_conf_d }} -n {{ ipsec_fqdn }}"
+  failed_when: false
+  changed_when: false
+  register: __chk_certs
+
+- name: import certificates
+  command: "pk12util -i {{ ipsec_pkcs12_bundle }} -W {{ ipsec_pkcs12_bundle_password }} -d sql:{{ ipsec_conf_d }}"
+  when: __chk_certs.rc != 0
+
+- name: configure ipsec main
+  template:
+    dest: "{{ipsec_config_file}}"
+    src: ipsec.conf.j2
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload ipsec
+
+- name: generate policies
+  template:
+    dest: "{{ ipsec_policy_d }}/{{ item }}"
+    src: policy.j2
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{ipsec_oppo_keys}}"
+  notify: reload groups
+
+- name: start ipsec
+  service:
+    name: ipsec
+    state: started
+

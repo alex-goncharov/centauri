@@ -1,0 +1,9 @@
+[all]
+nifnif ansible_host=192.168.2.223
+nafnaf ansible_host=192.168.1.160
+nufnuf ansible_host=192.168.0.80
+
+[all:vars]
+ansible_connection=ssh
+ansible_ssh_user=ubuntu
+ansible_ssh_common_args="-o 'ProxyCommand ssh ubuntu@54.154.81.115 /bin/nc %h %p' -o 'ControlPersist 1800s' -o 'ControlMaster=auto'"

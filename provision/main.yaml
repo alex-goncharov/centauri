@@ -1,0 +1,44 @@
+---
+
+- hosts: nafnaf
+  become: yes
+  become_user: root
+  become_method: sudo
+  vars:
+    my_hostname: "{{ '{:02x}'.format(ansible_default_ipv4.address | ipv4('int')) }}"
+    my_domainname: k8.tnt-digital.io
+    my_fqdn: "{{ my_hostname }}.{{ my_domainname }}"
+    cluster_subnets:
+      - 192.168.0.0/24
+      - 192.168.1.0/24
+      - 192.168.2.0/24
+    get_certs_fqdn: "{{my_fqdn}}"
+    get_certs_ca_bucket: 156776894708-tnt-digital.io.ca
+    ipsec_fqdn: "{{ my_fqdn }}"
+    ipsec_private: {}
+    ipsec_private_or_clear:
+      type: tunnel
+      auto: ondemand
+      authby: rsasig
+      ikev2: insist
+      narrowing: "yes"
+      negotiationshunt: hold
+      failureshunt: passthrough
+      keyingtries: 1
+      retransmit-timeout: 3s
+      send-vendorid: "yes"
+      left: "{{ ansible_default_ipv4.address }}"
+      leftid: "%fromcert"
+      leftrsasigkey: "%cert"
+      leftcert: "{{ my_fqdn }}"
+      right: "%opportunisticgroup"
+      rightid: "%fromcert"
+      rightrsasigkey: "%cert"
+      rightca: "%same"
+    ipsec_private_or_clear_policy: "{{ cluster_subnets }}"
+    ipsec_pkcs12_bundle: "/root/certs/{{ my_fqdn }}.p12"
+    ipsec_pkcs12_bundle_password: memento
+  roles:
+    - get_certs
+    - ipsec
+

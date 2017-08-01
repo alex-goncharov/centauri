@@ -1,0 +1,39 @@
+---
+
+- name: make some dirs
+  file:
+    name: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+  with_items:
+    - "{{ get_certs_dest }}"
+
+- name: standard issue boto
+  apt:
+    name: python-boto
+    state: latest
+
+- name: check if certs are there
+  stat:
+    path: "{{ get_certs_cert_paths[item]['dest'] }}"
+  with_items: "{{ get_certs_cert_paths }}"
+  register: __cert_stat
+
+- name: get certifiacate material
+  s3:
+    bucket: "{{ get_certs_ca_bucket }}"
+    object: "{{ get_certs_cert_paths[item.1]['src'] }}"
+    dest: "{{ get_certs_cert_paths[item.1]['dest'] }}"
+    mode: get
+    region: "{{ get_certs_aws_region }}"
+  with_indexed_items: "{{ get_certs_cert_paths.keys() }}"
+  when: not __cert_stat['results'][item.0]['stat']['exists']
+
+- name: ch(mod|own) certs
+  shell: "chmod 0600 {{ get_certs_dest }}/*;chown root.root {{ get_certs_dest }}/*"
+  args:
+    warn: no
+  changed_when: false
+

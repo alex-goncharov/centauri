@@ -1,0 +1,25 @@
+---
+
+get_certs_aws_region: eu-west-1
+
+get_certs_dest: /root/certs
+
+get_certs_cert_paths:
+  root:
+    src: /ca/certs/ca.cert.pem
+    dest: "{{ get_certs_dest }}/ca.pem"
+  intermediate:
+    src: /intermediate/certs/intermediate.cert.pem
+    dest: "{{ get_certs_dest }}/intermediate.pem"
+  ca_budle:
+    src: /intermediate/certs/ca-chain.cert.pem
+    dest: "{{ get_certs_dest }}/ca_bundle.pem"
+  cert:
+    src: "intermediate/certs/{{ get_certs_fqdn }}.cert.pem"
+    dest: "{{ get_certs_dest }}/{{ get_certs_fqdn }}.cert.pem"
+  key:
+    src: "intermediate/private/{{ get_certs_fqdn }}.key.pem"
+    dest: "{{ get_certs_dest }}/{{ get_certs_fqdn }}.key.pem"
+  pkcs12_bundle:
+    src: "intermediate/private/{{ get_certs_fqdn }}.p12"
+    dest: "{{ get_certs_dest }}/{{ get_certs_fqdn }}.p12"

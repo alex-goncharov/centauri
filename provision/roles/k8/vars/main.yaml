@@ -1,0 +1,20 @@
+---
+
+k8_conf_d: /etc/kubernetes
+
+
+systemd_d: /etc/systemd/system
+
+k8_kubelet_user: kubeproxy
+k8_kubelet_path: /sbin/kubelet
+k8_kubelet_conf_d: "{{ k8_conf_d }}/kubelet"
+k8_kubelet_manifests_d: "{{ k8_kubelet_conf_d }}/manifests"
+k8_kubelet_k8config_path: "{{ k8_kubelet_conf_d }}/k8.yaml"
+k8_kubelet_work_d: /var/lib/kubelet
+
+
+k8_kubeproxy_user: kubeproxy
+k8_kubeproxy_conf_d: "{{ k8_conf_d }}/kube-proxy"
+k8_kubeproxy_path: /sbin/kube-proxy
+k8_kubeproxy_config_path: "{{ k8_kubeproxy_conf_d }}/kube-proxy.yaml"
+k8_kubeproxy_k8config_path: "{{ k8_kubeproxy_conf_d }}/k8.yaml"

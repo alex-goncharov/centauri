@@ -1,0 +1,90 @@
+---
+
+k8_master_url: http://127.0.0.1
+
+k8_cluster_name: centauri
+k8_kubeproxy_token: something_very_very_very_long
+
+k8_kubelet_token: very_very_very_long_something
+
+
+
+## can't touch this
+
+k8_kubeproxy_config:
+  apiVersion: componentconfig/v1alpha1
+  bindAddress: 0.0.0.0
+  clientConnection:
+    acceptContentTypes: ""
+    burst: 10
+    contentType: application/vnd.kubernetes.protobuf
+    kubeconfig: "{{ k8_kubeproxy_k8config_path }}"
+    qps: 5
+  clusterCIDR: ""
+  configSyncPeriod: 15m0s
+  conntrack:
+    max: 0
+    maxPerCore: 32768
+    min: 131072
+    tcpCloseWaitTimeout: 1h0m0s
+    tcpEstablishedTimeout: 24h0m0s
+  enableProfiling: false
+  featureGates: ""
+  healthzBindAddress: 0.0.0.0:10256
+  hostnameOverride: ""
+  iptables:
+    masqueradeAll: false
+    masqueradeBit: 14
+    minSyncPeriod: 0s
+    syncPeriod: 30s
+  kind: KubeProxyConfiguration
+  metricsBindAddress: 127.0.0.1:10249
+  mode: ""
+  oomScoreAdj: -999
+  portRange: ""
+  resourceContainer: /kube-proxy
+  udpTimeoutMilliseconds: 250ms
+
+k8_kubeproxy_k8config:
+  apiVersion: v1
+  clusters:
+  - cluster:
+      insecure-skip-tls-verify: true
+      server: "{{ k8_master_url }}"
+    name: "{{ k8_cluster_name }}"
+  contexts:
+  - context:
+      cluster: "{{ k8_cluster_name }}"
+      user: "{{ k8_kubeproxy_user }}"
+    name: local
+  current-context: local
+  kind: Config
+  preferences: {}
+  users:
+    - name: "{{ k8_kubeproxy_user }}"
+      user:
+        token: "{{ k8_kubeproxy_token }}"
+
+k8_kubelet_k8config:
+  apiVersion: v1
+  clusters:
+  - cluster:
+      insecure-skip-tls-verify: true
+      server: "{{ k8_master_url }}"
+    name: "{{ k8_cluster_name }}"
+  contexts:
+  - context:
+      cluster: "{{ k8_cluster_name }}"
+      user: "{{ k8_kubelet_user }}"
+    name: local
+  current-context: local
+  kind: Config
+  preferences: {}
+  users:
+    - name: "{{ k8_kubelet_user }}"
+      user:
+        token: "{{ k8_kubelet_token }}"
+
+
+
+

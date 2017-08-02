@@ -1,6 +1,6 @@
 ---
 
-- hosts: nafnaf
+- hosts: all
   become: yes
   become_user: root
   become_method: sudo
@@ -38,7 +38,11 @@
     ipsec_private_or_clear_policy: "{{ cluster_subnets }}"
     ipsec_pkcs12_bundle: "/root/certs/{{ my_fqdn }}.p12"
     ipsec_pkcs12_bundle_password: memento
+    k8_kubelet_token: "4flYetyJoWgNcqmrsHMD9uNyXYew2aqV"
+    k8_kubeproxy_token: "3em7qW0h0rBkjBXmQEkunC7Pz3vK9Bhe"
+    k8_admin_token: "z0vSVgSkv2LWVWPvT7a9cRNk86wvr7G3"
   roles:
-    - get_certs
-    - ipsec
+    #- get_certs
+    #- ipsec
+    - k8
 

@@ -1,0 +1,50 @@
+---
+
+- name: check that kubelet is in place
+  stat:
+    path: "{{ k8_kubelet_path }}"
+  register: __chk_kubelet
+
+- name: fail if kubelet is not there
+  fail: "Cannot find kubelet at {{ k8_kubelet_path }}, please have things installed first"
+  when: not __chk_kubelet.stat.exists
+
+- name: make some directories
+  file:
+    name: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0750
+  with_items:
+    - "{{ k8_kubelet_conf_d }}"
+    - "{{ k8_kubelet_work_d }}"
+    - "{{ k8_kubelet_manifests_d }}"
+
+- name: configure k8 for kubelet
+  template:
+    src: yaml.j2
+    dest: "{{ k8_kubelet_k8config_path }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - "{{ k8_kubelet_k8config }}"
+
+- name: create systemd unit for kubelet
+  template:
+    src: kubelet.service.j2
+    dest: "{{ systemd_d }}/kubelet.service"
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload systemd
+
+- name: refresh systemd now
+  meta: flush_handlers
+
+- name: start kubelet
+  service:
+    name: kubelet
+    state: started
+

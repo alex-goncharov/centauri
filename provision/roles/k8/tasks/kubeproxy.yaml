@@ -1,0 +1,58 @@
+---
+
+- name: check that kube-proxy is in place
+  stat:
+    path: "{{ k8_kubeproxy_path }}"
+  register: __chk_kubeproxy
+
+- name: fail if kube-proxy is not there
+  fail: "Cannot find kube-proxy at {{ k8_kubeproxy_path }}, please have things installed first"
+  when: not __chk_kubeproxy.stat.exists
+
+- name: make some directories
+  file:
+    name: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0750
+  with_items:
+    - "{{ k8_kubeproxy_conf_d }}"
+
+# with_items here is a bit of a hack so that template can be reused
+- name: configure k8 for kube-proxy
+  template:
+    src: yaml.j2
+    dest: "{{ k8_kubeproxy_k8config_path }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - "{{ k8_kubeproxy_k8config }}"
+
+- name: configure kube-proxy
+  template:
+    src: yaml.j2
+    dest: "{{ k8_kubeproxy_config_path }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - "{{ k8_kubeproxy_config }}"
+
+- name: add systemd unit
+  template:
+    src: kube-proxy.service.j2
+    dest: "{{ systemd_d }}/kube-proxy.service"
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload systemd
+
+- name: refresh systemd now
+  meta: flush_handlers
+
+- name: start kube-proxy
+  service:
+    name: kube-proxy
+    state: started

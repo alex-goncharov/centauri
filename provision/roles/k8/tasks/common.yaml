@@ -1,0 +1,11 @@
+---
+
+- name: make some directories
+  file:
+    name: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0750
+  with_items:
+    - "{{ k8_conf_d }}"

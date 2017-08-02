@@ -1,0 +1,15 @@
+[Unit]
+Description=Kubernetes Kube-proxy Server
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+# TODO
+# After: ansible provisioner
+# Requires: anisible provisioner
+
+[Service]
+ExecStart={{ k8_kubeproxy_path }} --config {{ k8_kubeproxy_config_path }}
+KillMode=process
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

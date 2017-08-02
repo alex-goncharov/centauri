@@ -1,0 +1,22 @@
+[Unit]
+Description=Kubernetes Kubelet Server
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+# TODO
+# After: ansible provisioner
+# Requires: anisible provisioner
+
+[Service]
+ExecStart={{ k8_kubelet_path }} \
+  --kubeconfig={{ k8_kubelet_k8config_path }} \
+  --cni-conf-dir=/etc/kubernetes/cni/net.d \
+  --network-plugin=cni \
+  --container-runtime=docker \
+  --allow-privileged=true \
+  --pod-manifest-path={{ k8_kubelet_manifests_d }}
+KillMode=process
+Restart=always
+RestartSec=10
+WorkingDirectory={{ k8_kubelet_work_d }}
+
+[Install]
+WantedBy=multi-user.target

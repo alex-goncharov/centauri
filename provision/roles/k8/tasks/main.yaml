@@ -1,0 +1,7 @@
+
+- include: common.yaml
+- include: kubelet.yaml
+- include: kubeproxy.yaml
+
+
+

@@ -18,3 +18,10 @@ k8_kubeproxy_conf_d: "{{ k8_conf_d }}/kube-proxy"
 k8_kubeproxy_path: /sbin/kube-proxy
 k8_kubeproxy_config_path: "{{ k8_kubeproxy_conf_d }}/kube-proxy.yaml"
 k8_kubeproxy_k8config_path: "{{ k8_kubeproxy_conf_d }}/k8.yaml"
+
+k8_etcd_ids:
+  - homer
+  - marge
+  - bart
+  - lisa
+  - maggie

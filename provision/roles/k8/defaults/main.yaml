@@ -2,6 +2,8 @@
 
 k8_master_url: http://127.0.0.1
 
+k8_pod_cidr: 10.250.0.0/16
+
 k8_cluster_name: centauri
 k8_kubeproxy_token: something_very_very_very_long
 

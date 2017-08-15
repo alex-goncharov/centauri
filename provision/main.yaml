@@ -41,6 +41,7 @@
     k8_kubelet_token: "4flYetyJoWgNcqmrsHMD9uNyXYew2aqV"
     k8_kubeproxy_token: "3em7qW0h0rBkjBXmQEkunC7Pz3vK9Bhe"
     k8_admin_token: "z0vSVgSkv2LWVWPvT7a9cRNk86wvr7G3"
+    k8_pod_cidr: "10.10.0.0/16"
   roles:
     #- get_certs
     #- ipsec

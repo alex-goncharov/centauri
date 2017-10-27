@@ -20,6 +20,7 @@ data "aws_iam_policy_document" "ca" {
 }
 
 resource "aws_s3_bucket" "ca" {
-  bucket = "${data.aws_caller_identity.current_user.account_id}-tnt-digital.io.ca"
-  policy = "${data.aws_iam_policy_document.ca.json}"
+  bucket        = "${data.aws_caller_identity.current_user.account_id}-tnt-digital.io.ca"
+  policy        = "${data.aws_iam_policy_document.ca.json}"
+  force_destroy = true
 }

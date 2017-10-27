@@ -1,3 +1,4 @@
 provider "aws" {
-  region = "eu-west-1"
+  profile = "nova-direct"
+  region  = "eu-west-1"
 }
